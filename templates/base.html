@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>Chatbot</title>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container mt-5">
+		<h1 class="text-center mb-4">Chatbot</h1>
+		<div class="card">
+			<div class="card-body">
+				<div class="chatbox">
+					<!-- Chat history will be displayed here -->
+				</div>
+				<form id="chat-form">
+					<div class="form-group">
+						<input name="message" type="text" class="form-control" id="chat-input" placeholder="Enter your message...">
+					</div>
+					<button type="submit" class="btn btn-primary">Send</button>
+				</form>
+			</div>
+		</div>
+	</div>
+	<script>
+		// Submit the form when the user clicks the send button
+        $("#chat-form").submit(function(e) {
+    e.preventDefault();
+    var message = $("#chat-input").val();
+    console.log("Message:", message); // Add this line to check the value of the message
+    if (message != "") {
+        // Add the user's message to the chat history
+        $(".chatbox").append("<div class='message message-user'>" + message + "</div>");
+
+        // Send the message to the chatbot and add its response to the chat history
+        $.ajax({
+            url: "/predict",
+            type: "POST",
+            data: message,
+            success: function(response) {
+                console.log("Response:", response);
+                console.log("Type:", typeof response);
+                $(".chatbox").append("<div class='message message-chatbot'>" + response.response.response + "</div>");
+            },
+
+            error: function(xhr) {
+                console.log("Error sending message to server.");
+            }
+        });
+
+        // Clear the input field
+        $("#chat-input").val("");
+    }
+});
+
+	</script>
+</body>
+</html>
